@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What's Actually Happening in Your Relationship? — Free Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --red:    #B83232;
+  --red-l:  #FAEDEA;
+  --red-m:  #E8857A;
+  --gold:   #C4972A;
+  --gold-l: #FEF8E7;
+  --dark:   #1A1F2B;
+  --mid:    #5A6272;
+  --light:  #F5F3EF;
+  --smoke:  #ECEAE5;
+  --border: #DDD9D2;
+  --green:  #1A6B45;
+  --green-l:#EAFAF1;
+  --orange: #C45A1A;
+  --ora-l:  #FEF0E6;
+  --white:  #FFFFFF;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--light);
+  color: var(--dark);
+  min-height: 100vh;
+}
+
+/* ── SCREENS ── */
+.screen { display: none; }
+.screen.active { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ══════════════════ COVER ══════════════════ */
+#cover {
+  background: var(--dark);
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+#cover::before {
+  content:'';position:absolute;top:-30%;right:-20%;width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(184,50,50,.18) 0%,transparent 70%);pointer-events:none;
+}
+#cover::after {
+  content:'';position:absolute;bottom:-25%;left:-15%;width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(196,151,42,.1) 0%,transparent 70%);pointer-events:none;
+}
+.cover-inner { position:relative; max-width:620px; margin:0 auto; }
+.cover-tag {
+  font-size:10px; font-weight:500; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--red-m); margin-bottom:1.5rem;
+  display:flex;align-items:center;justify-content:center;gap:.75rem;
+}
+.cover-tag::before,.cover-tag::after {
+  content:''; display:inline-block; width:24px; height:1px; background:var(--red-m);
+}
+.cover-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.2rem,6vw,3.6rem);
+  font-weight:700; line-height:1.1; color:#fff;
+  margin-bottom:1.25rem; letter-spacing:-.02em;
+}
+.cover-title em { font-style:italic; color:var(--red-m); }
+.cover-sub {
+  font-size:1rem; color:rgba(255,255,255,.5);
+  font-weight:300; max-width:460px; margin:0 auto 2.5rem; line-height:1.7;
+}
+.cover-pills {
+  display:flex; gap:.75rem; flex-wrap:wrap; justify-content:center; margin-bottom:2.5rem;
+}
+.pill {
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+  border-radius:20px; padding:.35rem .9rem;
+  font-size:11px; color:rgba(255,255,255,.5); letter-spacing:.05em;
+}
+.btn-start {
+  background:var(--red); color:#fff; border:none;
+  padding:1rem 2.4rem; font-family:'DM Sans',sans-serif;
+  font-size:1rem; font-weight:500; border-radius:3px;
+  cursor:pointer; transition:background .2s,transform .1s;
+  letter-spacing:.02em;
+}
+.btn-start:hover { background:#9A1F1F; transform:translateY(-1px); }
+.cover-note {
+  margin-top:1.25rem; font-size:11px;
+  color:rgba(255,255,255,.25); font-style:italic;
+}
+
+/* ══════════════════ PROGRESS BAR ══════════════════ */
+.progress-bar-wrap {
+  background:var(--dark);
+  padding:.9rem 1.5rem;
+  position:sticky; top:0; z-index:50;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.progress-meta {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:6px;
+}
+.progress-section { font-size:10px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--red-m); }
+.progress-count { font-size:11px; color:rgba(255,255,255,.35); }
+.progress-track { height:2px; background:rgba(255,255,255,.1); border-radius:2px; overflow:hidden; }
+.progress-fill { height:100%; background:var(--red); border-radius:2px; transition:width .4s ease; }
+
+/* ══════════════════ QUIZ BODY ══════════════════ */
+#quiz {
+  background:var(--light);
+  flex:1;
+}
+.quiz-inner { max-width:640px; margin:0 auto; padding:2.5rem 1.5rem 5rem; }
+
+.q-block { animation:fadeUp .3s ease both; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+.q-num { font-size:10px; font-weight:500; letter-spacing:.15em; text-transform:uppercase; color:var(--red); margin-bottom:6px; }
+.q-text {
+  font-family:'Playfair Display',serif; font-size:1.15rem;
+  font-weight:600; color:var(--dark); margin-bottom:.5rem; line-height:1.45;
+}
+.q-sub { font-size:.82rem; color:var(--mid); font-style:italic; margin-bottom:1rem; }
+
+.options { display:flex; flex-direction:column; gap:8px; }
+.opt {
+  display:flex; align-items:flex-start; gap:12px;
+  padding:.85rem 1rem; background:var(--white);
+  border:1px solid var(--border); border-radius:6px;
+  cursor:pointer; transition:border-color .15s,background .15s;
+  text-align:left; font-family:'DM Sans',sans-serif;
+  font-size:.9rem; color:var(--dark); line-height:1.45; font-weight:400;
+}
+.opt:hover { border-color:var(--red); background:var(--red-l); }
+.opt.selected { border-color:var(--red); background:var(--red-l); }
+.opt-dot {
+  width:18px; height:18px; border-radius:50%;
+  border:1.5px solid var(--border); flex-shrink:0; margin-top:1px;
+  transition:border-color .15s,background .15s;
+  display:flex; align-items:center; justify-content:center;
+}
+.opt.selected .opt-dot { border-color:var(--red); background:var(--red); }
+.opt.selected .opt-dot::after { content:''; width:6px; height:6px; border-radius:50%; background:#fff; }
+
+/* section intro */
+.section-intro {
+  background:var(--white); border:1px solid var(--border);
+  border-left:4px solid var(--red); border-radius:0 6px 6px 0;
+  padding:1rem 1.25rem; margin-bottom:1.75rem;
+}
+.section-intro h3 { font-family:'Playfair Display',serif; font-size:1rem; font-weight:600; color:var(--dark); margin-bottom:.25rem; }
+.section-intro p { font-size:.82rem; color:var(--mid); }
+
+/* nav */
+.q-nav {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid var(--border);
+}
+.btn-back {
+  background:none; border:1px solid var(--border); padding:.65rem 1.3rem;
+  font-family:'DM Sans',sans-serif; font-size:.875rem; color:var(--mid);
+  border-radius:3px; cursor:pointer; transition:border-color .15s;
+}
+.btn-back:hover { border-color:var(--mid); color:var(--dark); }
+.btn-next {
+  background:var(--dark); color:#fff; border:none;
+  padding:.7rem 1.8rem; font-family:'DM Sans',sans-serif;
+  font-size:.9rem; font-weight:500; border-radius:3px;
+  cursor:pointer; transition:background .15s; opacity:1;
+}
+.btn-next:hover { background:#2C3344; }
+.btn-next:disabled { opacity:.3; cursor:not-allowed; }
+
+/* ══════════════════ RESULTS ══════════════════ */
+#results { background:var(--light); flex:1; }
+.results-inner { max-width:680px; margin:0 auto; padding:3rem 1.5rem 5rem; }
+
+/* result header */
+.result-header { text-align:center; margin-bottom:2.5rem; }
+.result-eyebrow { font-size:10px; font-weight:500; letter-spacing:.2em; text-transform:uppercase; color:var(--mid); margin-bottom:1rem; }
+.result-type-badge {
+  display:inline-block; padding:.4rem 1.1rem; border-radius:20px;
+  font-size:11px; font-weight:500; letter-spacing:.1em; text-transform:uppercase;
+  margin-bottom:1.25rem;
+}
+.result-title {
+  font-family:'Playfair Display',serif; font-size:clamp(1.7rem,3.5vw,2.4rem);
+  font-weight:700; line-height:1.15; color:var(--dark);
+  margin-bottom:.75rem; letter-spacing:-.01em;
+}
+.result-sub { font-size:.975rem; color:var(--mid); font-weight:300; line-height:1.7; max-width:500px; margin:0 auto; }
+
+/* profile card */
+.profile-card {
+  background:var(--dark); border-radius:8px;
+  padding:2rem; margin-bottom:1.5rem; position:relative; overflow:hidden;
+}
+.profile-card::before {
+  content:''; position:absolute; top:-40%; right:-20%; width:300px; height:300px;
+  border-radius:50%; background:radial-gradient(circle,rgba(184,50,50,.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.profile-card-label { font-size:10px; font-weight:500; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.35); margin-bottom:.75rem; }
+.profile-card-desc { font-family:'Playfair Display',serif; font-style:italic; font-size:1.05rem; color:rgba(255,255,255,.8); line-height:1.7; margin-bottom:1.25rem; }
+.profile-signals { display:flex; flex-direction:column; gap:8px; }
+.signal {
+  display:flex; align-items:flex-start; gap:10px;
+  font-size:.875rem; color:rgba(255,255,255,.65); line-height:1.5;
+}
+.signal-dot { width:6px; height:6px; border-radius:50%; background:var(--red-m); flex-shrink:0; margin-top:6px; }
+
+/* dimensions mini */
+.dims { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:1.5rem; }
+@media(max-width:480px){.dims{grid-template-columns:1fr;}}
+.dim-card { background:var(--white); border:1px solid var(--border); border-radius:6px; padding:1rem 1.1rem; }
+.dim-label { font-size:10px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--mid); margin-bottom:6px; }
+.dim-bar-track { height:4px; background:var(--smoke); border-radius:2px; overflow:hidden; margin-bottom:6px; }
+.dim-bar { height:100%; border-radius:2px; transition:width 1s ease .3s; }
+.dim-row { display:flex; justify-content:space-between; font-size:11px; color:var(--mid); }
+.dim-row strong { color:var(--dark); font-weight:500; }
+
+/* what this means section */
+.wtm { margin-bottom:1.5rem; }
+.wtm-title { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:600; color:var(--dark); margin-bottom:1rem; }
+.wtm-item {
+  display:flex; gap:12px; align-items:flex-start;
+  padding:.9rem 1rem; background:var(--white);
+  border:1px solid var(--border); border-radius:6px; margin-bottom:8px;
+}
+.wtm-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
+.wtm-text { font-size:.875rem; color:var(--dark); line-height:1.6; }
+
+/* CTA block — the key part */
+.cta-block {
+  background:var(--dark); border-radius:8px;
+  padding:2rem; margin-bottom:1.5rem;
+  border:2px solid var(--red);
+}
+.cta-block-eyebrow { font-size:10px; font-weight:500; letter-spacing:.18em; text-transform:uppercase; color:var(--red-m); margin-bottom:.6rem; }
+.cta-block-title { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; color:#fff; margin-bottom:.75rem; line-height:1.3; }
+.cta-block-sub { font-size:.875rem; color:rgba(255,255,255,.55); font-weight:300; line-height:1.65; margin-bottom:1.5rem; }
+.cta-features { display:flex; flex-direction:column; gap:8px; margin-bottom:1.75rem; }
+.cta-feature {
+  display:flex; gap:10px; align-items:flex-start;
+  font-size:.85rem; color:rgba(255,255,255,.7); line-height:1.5;
+}
+.cta-feature-icon { color:var(--red-m); flex-shrink:0; font-size:12px; margin-top:2px; }
+.cta-feature strong { color:rgba(255,255,255,.9); font-weight:500; }
+.btn-cta {
+  display:block; text-align:center; text-decoration:none;
+  background:var(--red); color:#fff;
+  padding:1rem 2rem; border-radius:3px;
+  font-family:'DM Sans',sans-serif; font-size:.975rem; font-weight:500;
+  transition:background .2s; letter-spacing:.02em;
+}
+.btn-cta:hover { background:#9A1F1F; }
+.cta-trust { text-align:center; font-size:11px; color:rgba(255,255,255,.25); margin-top:.75rem; font-style:italic; }
+
+/* situation preview inline */
+.sits-preview { margin-bottom:1.5rem; }
+.sits-preview-label { font-size:10px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--mid); margin-bottom:.75rem; }
+.sits-grid { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:6px; overflow:hidden; }
+@media(max-width:480px){.sits-grid{grid-template-columns:1fr;}}
+.sit { background:var(--white); padding:.7rem .9rem; display:flex; gap:8px; font-size:.82rem; color:var(--dark); line-height:1.4; }
+.sit-n { font-size:.75rem; color:var(--red); flex-shrink:0; margin-top:1px; min-width:18px; }
+
+/* quote */
+.result-quote {
+  background:var(--smoke); border-left:3px solid var(--red);
+  padding:1.25rem 1.4rem; border-radius:0 6px 6px 0; margin-bottom:1.5rem;
+}
+.result-quote p { font-family:'Playfair Display',serif; font-style:italic; font-size:.975rem; color:var(--dark); line-height:1.65; }
+
+/* disclaimer */
+.result-disclaimer {
+  font-size:.8rem; color:var(--mid); line-height:1.65;
+  padding:1rem 1.1rem; background:var(--smoke);
+  border:1px solid var(--border); border-radius:6px;
+  margin-bottom:1.5rem;
+}
+
+/* restart */
+.restart-row { text-align:center; margin-top:2rem; }
+.btn-restart { background:none; border:1px solid var(--border); padding:.65rem 1.5rem; font-family:'DM Sans',sans-serif; font-size:.85rem; color:var(--mid); border-radius:3px; cursor:pointer; transition:border-color .15s; }
+.btn-restart:hover { border-color:var(--mid); color:var(--dark); }
+</style>
+</head>
+<body>
+
+<!-- ══ COVER ══ -->
+<div id="cover" class="screen active">
+  <div class="cover-inner">
+    <p class="cover-tag">Free Relationship Quiz</p>
+    <h1 class="cover-title">What's <em>actually</em> happening<br>in your relationship?</h1>
+    <p class="cover-sub">9 questions. Find out which avoidant pattern is affecting you most — and what to do about it specifically.</p>
+    <div class="cover-pills">
+      <span class="pill">Takes 3 minutes</span>
+      <span class="pill">Research-based</span>
+      <span class="pill">Specific results</span>
+      <span class="pill">Free</span>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">Find Out Now →</button>
+    <p class="cover-note">No email required · No signup · Just answers</p>
+  </div>
+</div>
+
+<!-- ══ QUIZ ══ -->
+<div id="quiz" class="screen">
+  <div class="progress-bar-wrap">
+    <div class="progress-meta">
+      <span class="progress-section" id="prog-section">Section 1 of 3</span>
+      <span class="progress-count" id="prog-count">Question 1 of 9</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+    </div>
+  </div>
+  <div class="quiz-inner">
+    <div id="q-container"></div>
+    <div class="q-nav">
+      <button class="btn-back" id="btn-back" onclick="goBack()">← Back</button>
+      <button class="btn-next" id="btn-next" onclick="goNext()" disabled>Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RESULTS ══ -->
+<div id="results" class="screen">
+  <div class="results-inner" id="results-inner"></div>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────
+// Each question tags one or more of 5 pattern types:
+// A = Hot-cold / distance cycle
+// B = Breadcrumbing / inconsistency
+// C = Emotional unavailability (keeps you close, won\'t let you in)
+// D = You\'re losing yourself (identity erosion / anxious spiral)
+// E = The relationship is past its potential (cycling with no change)
+
+const SECTIONS = [
+  {
+    id: 'behavior',
+    label: 'Section 1 — His Behavior',
+    title: 'His Behavior',
+    sub: 'What you\'re actually experiencing — not what you think it means.',
+    qs: [
+      {
+        id: 'q1',
+        text: 'How would you describe the most consistent pattern in how he shows up?',
+        sub: null,
+        opts: [
+          { text: 'Hot and cold — warm one week, distant the next, no clear reason', tags: {A:3, B:1} },
+          { text: 'He gives just enough to keep things going but never fully shows up', tags: {B:3, C:1} },
+          { text: 'Present and engaged but emotionally walled off — there\'s a ceiling', tags: {C:3, A:1} },
+          { text: 'He\'s consistent but the pattern never changes, no matter what we try', tags: {E:3} },
+        ]
+      },
+      {
+        id: 'q2',
+        text: 'After a moment of real closeness — a good night, a vulnerable conversation, physical intimacy — what usually happens?',
+        sub: null,
+        opts: [
+          { text: 'He pulls back. Goes quiet or cold. Acts like it didn\'t happen', tags: {A:3, C:1} },
+          { text: 'Things stay warm for a bit, then fade out slowly until he disappears', tags: {B:3} },
+          { text: 'He stays but closes off emotionally — less accessible than before', tags: {C:3} },
+          { text: 'Nothing predictable — it varies completely', tags: {A:1, B:1, D:1} },
+        ]
+      },
+      {
+        id: 'q3',
+        text: 'When you reach out after a silence or withdrawal, what typically happens?',
+        sub: null,
+        opts: [
+          { text: 'He responds warmly, like nothing happened — no acknowledgment of the gap', tags: {A:2, B:2} },
+          { text: 'He gives a minimal response — enough to keep the thread alive, nothing more', tags: {B:3, C:1} },
+          { text: 'He engages, but redirects away from anything emotional', tags: {C:3} },
+          { text: 'He doesn\'t respond, or blocks/ignores completely', tags: {A:2, E:2} },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'impact',
+    label: 'Section 2 — The Impact on You',
+    title: 'The Impact on You',
+    sub: 'What this relationship is doing to your nervous system and sense of self.',
+    qs: [
+      {
+        id: 'q4',
+        text: 'On an average day, how much mental space does this relationship take up?',
+        sub: null,
+        opts: [
+          { text: 'Most of it. I\'m constantly analyzing, waiting, reading into things', tags: {D:3, A:1} },
+          { text: 'A lot. Especially when things go quiet or after a good moment', tags: {D:2, A:2} },
+          { text: 'Some. Mostly when specific things happen', tags: {D:1} },
+          { text: 'More than it used to. I\'ve changed how anxious I am overall', tags: {D:3, E:1} },
+        ]
+      },
+      {
+        id: 'q5',
+        text: 'Compared to who you were before this relationship, how do you feel?',
+        sub: null,
+        opts: [
+          { text: 'Less like myself. More anxious, more careful, smaller somehow', tags: {D:3, E:1} },
+          { text: 'About the same, but I notice I\'ve been making myself smaller to avoid friction', tags: {D:2, C:1} },
+          { text: 'Mostly okay, though I feel unseen in specific ways', tags: {C:2, B:1} },
+          { text: 'I barely recognize myself compared to before this', tags: {D:3, E:2} },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'clarity',
+    label: 'Section 3 — Where You Are Now',
+    title: 'Where You Are Now',
+    sub: 'What you already know — underneath the hope and the confusion.',
+    qs: [
+      {
+        id: 'q6',
+        text: 'When he comes back warm after a distance, what\'s your first instinct?',
+        sub: null,
+        opts: [
+          { text: 'Relief. I immediately re-engage and the cycle resets', tags: {A:3, D:1} },
+          { text: 'Hope. I think maybe this time will be different', tags: {B:2, E:2} },
+          { text: 'Guarded. I\'m glad but I\'m waiting for the next disappearance', tags: {A:2, D:2} },
+          { text: 'Exhausted. I\'m tired of this becoming the pattern', tags: {E:3, D:1} },
+        ]
+      },
+      {
+        id: 'q7',
+        text: 'Do you believe he is capable of giving you what you actually need in a relationship?',
+        sub: null,
+        opts: [
+          { text: 'Yes — I can see it in glimpses, he just doesn\'t sustain it', tags: {A:2, C:2} },
+          { text: 'I\'m not sure. The signals are too mixed to tell', tags: {B:3} },
+          { text: 'I think he wants to but something always stops him', tags: {C:3} },
+          { text: 'Honestly, probably not — but I keep hoping I\'m wrong', tags: {E:3, D:1} },
+        ]
+      },
+      {
+        id: 'q8',
+        text: 'What\'s the thing you most urgently need right now?',
+        sub: null,
+        opts: [
+          { text: 'To understand why he goes hot and cold — and what to do when it happens', tags: {A:3} },
+          { text: 'To understand what his minimal contact actually means', tags: {B:3} },
+          { text: 'To understand why he won\'t let me in even when things are good', tags: {C:3} },
+          { text: 'To get clarity on whether this relationship can actually change', tags: {E:3} },
+        ]
+      },
+      {
+        id: 'q9',
+        text: 'The most honest thing you could say about where you are right now is:',
+        sub: null,
+        opts: [
+          { text: '"I love him and I understand some of what\'s happening — I just need to know what to do next"', tags: {A:2, B:1, C:1} },
+          { text: '"I\'m confused. I can\'t tell if this is worth fighting for or if I\'m just hoping too hard"', tags: {B:2, E:2} },
+          { text: '"I\'m exhausted. I\'ve tried everything and nothing changes"', tags: {E:3, D:2} },
+          { text: '"I\'m losing myself in this and I don\'t fully know how to stop"', tags: {D:3, E:1} },
+        ]
+      },
+    ]
+  }
+];
+
+const ALL_QS = [];
+SECTIONS.forEach((sec, si) => sec.qs.forEach((q, qi) => ALL_QS.push({...q, si, qi})));
+const TOTAL = ALL_QS.length;
+
+let current = 0;
+const answers = {}; // qId -> tags object
+
+function startQuiz() {
+  show('quiz');
+  render();
+  window.scrollTo(0,0);
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function render() {
+  const q = ALL_QS[current];
+  const sec = SECTIONS[q.si];
+
+  // progress
+  document.getElementById('prog-fill').style.width = ((current/TOTAL)*100)+'%';
+  document.getElementById('prog-count').textContent = `Question ${current+1} of ${TOTAL}`;
+  document.getElementById('prog-section').textContent = sec.label;
+  document.getElementById('btn-back').style.visibility = current === 0 ? 'hidden' : 'visible';
+
+  const isLast = current === TOTAL - 1;
+  const nb = document.getElementById('btn-next');
+  nb.textContent = isLast ? 'See My Results →' : 'Next →';
+  nb.onclick = isLast ? showResults : goNext;
+  nb.disabled = !answers[q.id];
+
+  let html = '';
+  if (q.qi === 0) {
+    html += `<div class="section-intro"><h3>${sec.title}</h3><p>${sec.sub}</p></div>`;
+  }
+  html += `<div class="q-block">
+    <p class="q-num">Question ${current+1}</p>
+    <p class="q-text">${q.text}</p>
+    ${q.sub ? `<p class="q-sub">${q.sub}</p>` : ''}
+    <div class="options">`;
+  q.opts.forEach((o,i) => {
+    const sel = answers[q.id]?.idx === i;
+    const tagsStr = JSON.stringify(o.tags);
+    html += `<button class="opt${sel?' selected':''}" data-qid="${q.id}" data-idx="${i}" data-tags='${tagsStr}' onclick="pickBtn(this)">
+      <span class="opt-dot"></span><span>${o.text}</span>
+    </button>`;
+  });
+  html += `</div></div>`;
+  document.getElementById('q-container').innerHTML = html;
+}
+
+function pickBtn(btn) {
+  const qId = btn.dataset.qid;
+  const idx = parseInt(btn.dataset.idx);
+  const tags = JSON.parse(btn.dataset.tags);
+  answers[qId] = { idx, tags };
+  document.querySelectorAll(`[data-qid="${qId}"]`).forEach((b,i) => b.classList.toggle('selected', i===idx));
+  document.getElementById('btn-next').disabled = false;
+}
+
+function pick(qId, idx, tagsJson) {
+  const tags = JSON.parse(tagsJson.replace(/&quot;/g,'"'));
+  answers[qId] = { idx, tags };
+  document.querySelectorAll(`#opts-${qId} .opt`).forEach((b,i) => b.classList.toggle('selected', i===idx));
+  document.getElementById('btn-next').disabled = false;
+}
+
+function goNext() {
+  if (!answers[ALL_QS[current].id]) return;
+  current++;
+  render();
+  window.scrollTo(0,0);
+}
+
+function goBack() {
+  if (current === 0) return;
+  current--;
+  render();
+  window.scrollTo(0,0);
+}
+
+// ─── SCORE & RESULTS ────────────────────────────────────────────────────
+const PROFILES = {
+  A: {
+    badge: 'Hot-Cold Cycle',
+    badgeBg: '#FAEDEA',
+    badgeColor: '#8C1F1F',
+    barColor: '#B83232',
+    title: 'You\'re caught in the hot-cold cycle — and it\'s rewiring how you feel',
+    sub: 'The connection is real. The pattern is also real. You keep getting close, then losing him — then getting him back, then losing him again. And each cycle leaves you a little more anxious, a little less certain.',
+    profileDesc: 'The hot-cold cycle is the most disorienting pattern in avoidant dynamics. The warmth is genuine — which is exactly what makes the cold so confusing. Your nervous system has been trained to read warmth as a warning: closeness is coming, and so is the withdrawal.',
+    signals: [
+      'He goes quiet or cold right after your best moments together',
+      'You feel most anxious when things are actually going well',
+      'You replay what happened trying to understand what triggered the switch',
+      'Part of you is always waiting for the other shoe to drop',
+    ],
+    dims: [
+      { label: 'Understanding the pattern', pct: 20, color: '#B83232' },
+      { label: 'What to do in 72 hours', pct: 15, color: '#B83232' },
+      { label: 'Scripts for the cold phase', pct: 10, color: '#B83232' },
+      { label: 'When warmth returns', pct: 20, color: '#B83232' },
+    ],
+    insights: [
+      { icon: '🔄', text: 'The cycle is predictable once you can see the mechanism. Closeness triggers his deactivating system — the withdrawal is his nervous system, not a verdict on you.' },
+      { icon: '📡', text: 'How you respond during the cold phase determines how long it lasts. Most people make it worse without knowing it.' },
+      { icon: '💬', text: 'There are specific things to say — and not say — when he comes back warm. The script matters more than you might think.' },
+    ],
+    sits: ['06', '02', '09', '24', '14', '18'],
+    sitLabels: [
+      '06 — He said "I love you" then went cold two days later',
+      '02 — He disappeared after your best weekend together',
+      '09 — He moved on immediately after saying he needed space',
+      '24 — Everything is fine — and that makes you more anxious',
+      '14 — He comes back warm like nothing happened',
+      '18 — He came back — should you let him in?',
+    ],
+    quote: '"The most painful part is the inconsistency — it keeps your heart hopeful while your nervous system stays on edge."',
+    ctaTitle: 'The Decoder has a full section on the hot-cold cycle — with 6 situations that match exactly what you described.',
+    ctaSub: 'Each one tells you what\'s happening in his head at that specific moment, what it means for you, and what to do in the next 24-72 hours. Including word-for-word scripts for the moments you don\'t know what to say.',
+  },
+  B: {
+    badge: 'Breadcrumbing',
+    badgeBg: '#FEF0E6',
+    badgeColor: '#7A2E00',
+    barColor: '#C45A1A',
+    title: 'You\'re living on breadcrumbs — and they\'re just enough to keep you from moving on',
+    sub: 'He gives you enough to stay but not enough to feel secure. The random check-ins, the occasional warmth, the "I miss you" with nothing behind it. Each one resets your hope. None of them change the pattern.',
+    profileDesc: 'Breadcrumbing is one of the most psychologically exhausting patterns in avoidant dynamics because it doesn\'t look like a problem from the outside. He\'s not gone. He\'s just never fully there. And the intermittent contact keeps you in a state of low-level hope that prevents you from seeing the situation clearly.',
+    signals: [
+      'He reaches out just enough — a text, a like, a "thinking of you" — then goes quiet again',
+      'You find yourself over-reading each small contact for signs of more',
+      'You\'ve been in a "what are we" situation for longer than feels okay',
+      'Your hope resets every time he resurfaces, even when nothing has actually changed',
+    ],
+    dims: [
+      { label: 'What his minimal contact means', pct: 15, color: '#C45A1A' },
+      { label: 'How to respond without chasing', pct: 20, color: '#C45A1A' },
+      { label: 'Scripts for the re-engagement moments', pct: 15, color: '#C45A1A' },
+      { label: 'When to stop waiting', pct: 25, color: '#C45A1A' },
+    ],
+    insights: [
+      { icon: '🍞', text: 'Breadcrumbing maintains connection at the lowest possible emotional cost. It keeps you available without requiring him to be present. That\'s the function — not the feeling.' },
+      { icon: '⏱️', text: 'How you respond to breadcrumbs in the first 24 hours sets the dynamic for everything that follows. Immediate warmth signals they work. The decoder tells you exactly what to send instead.' },
+      { icon: '🔍', text: 'There\'s a difference between someone breadcrumbing because they genuinely can\'t show up more, and someone using it to avoid a decision. The Decoder helps you tell which one this is.' },
+    ],
+    sits: ['13', '15', '16', '11', '23', '07'],
+    sitLabels: [
+      '13 — He sends a random "thinking of you" after weeks of silence',
+      '15 — He keeps you close but won\'t let you in',
+      '16 — He turns everything around and makes you the problem',
+      '11 — He says "I love you" but won\'t commit to a relationship',
+      '23 — He acknowledges everything but changes nothing',
+      '07 — He\'s warm when he needs you, cold when you need him',
+    ],
+    quote: '"The worst part is when they come back just enough to reopen the wound — then disappear again the second things start feeling real."',
+    ctaTitle: 'The Decoder decodes 6 breadcrumbing situations — including the exact moment of re-engagement and what to do with it.',
+    ctaSub: 'You\'ll know what his minimal contact actually means, how to respond in a way that doesn\'t reset the dynamic, and how to tell whether this is worth your continued energy.',
+  },
+  C: {
+    badge: 'Emotional Wall',
+    badgeBg: '#EAFAF1',
+    badgeColor: '#0D4A2E',
+    barColor: '#1A6B45',
+    title: 'He\'s present — but there\'s a wall you can never quite get past',
+    sub: 'Things aren\'t bad. He\'s there. But there\'s a ceiling — emotional conversations that go only so far, certain questions that get deflected, a feeling of connection that never quite becomes something you can hold onto.',
+    profileDesc: 'This is one of the hardest patterns to name because it doesn\'t look like avoidant behavior from the outside. He shows up. He cares, in his way. But genuine vulnerability — his or yours — consistently hits a wall. Levine calls this "stable instability": chronic, low-level dissatisfaction that persists because neither person names the ceiling directly.',
+    signals: [
+      'Conversations get close and then he changes the subject or gets quieter',
+      'You feel connected in some ways but unseen in the ways that matter most',
+      'He\'s great in easy moments; unavailable when things get real',
+      'You\'ve stopped asking for certain things because you know how it will go',
+    ],
+    dims: [
+      { label: 'Why the wall is there', pct: 20, color: '#1A6B45' },
+      { label: 'How to name it without losing him', pct: 20, color: '#1A6B45' },
+      { label: 'What "secure base" behavior looks like', pct: 25, color: '#1A6B45' },
+      { label: 'Whether the ceiling can move', pct: 15, color: '#1A6B45' },
+    ],
+    insights: [
+      { icon: '🧱', text: 'The wall isn\'t indifference — it\'s a learned boundary. His nervous system built it in childhood and it runs automatically. Understanding the mechanism changes how you respond to it.' },
+      { icon: '🔑', text: 'There are specific ways to approach the ceiling that lower his threat response instead of raising it. Most people do the opposite — which is why the wall seems to thicken over time.' },
+      { icon: '📊', text: 'The key question is not whether he loves you. It\'s whether the ceiling can move. The Decoder includes a section on the specific signs that distinguish growth from permanent structural limitation.' },
+    ],
+    sits: ['15', '12', '05', '10', '17', '21'],
+    sitLabels: [
+      '15 — He keeps you close but won\'t let you in',
+      '12 — He opened up vulnerably then acted like it never happened',
+      '05 — He goes silent during conflict',
+      '10 — He gets cold after sex',
+      '17 — He\'s present for everyone except you',
+      '21 — You are the anxious one — and you know it',
+    ],
+    quote: '"Living on the other side of their lack of capacity — performance over presence — and how alone you are in that relationship."',
+    ctaTitle: 'The Decoder breaks down the emotional wall pattern across 6 situations — including how to have the conversation about the ceiling without triggering more distance.',
+    ctaSub: 'You\'ll understand why the wall is there, what actually moves it (and what doesn\'t), and whether what you\'re seeing is temporary limitation or permanent structure.',
+  },
+  D: {
+    badge: 'Identity Erosion',
+    badgeBg: '#F5F3EF',
+    badgeColor: '#3A3630',
+    barColor: '#6B6459',
+    title: 'You\'re losing yourself — and part of you knows it',
+    sub: 'This isn\'t just about him anymore. The hypervigilance, the constant analysis, the way your mood follows his responsiveness — this relationship has changed how you move through the world. That\'s the part nobody talks about.',
+    profileDesc: 'Anxious-avoidant dynamics don\'t just feel painful — they create measurable changes in your nervous system over time. Your baseline shifts. You become more alert, more careful, more focused on signals than on yourself. The person you were before this relationship would not recognize the mental space you give to analyzing someone else\'s behavior.',
+    signals: [
+      'You analyze his messages before responding — sometimes for longer than makes sense',
+      'Your self-worth fluctuates based on how he\'s treating you that day',
+      'You\'ve made yourself smaller, quieter, less demanding — and it still isn\'t enough',
+      'You\'re not sure you trust your own judgment about the relationship anymore',
+    ],
+    dims: [
+      { label: 'What the relationship is doing to you', pct: 10, color: '#6B6459' },
+      { label: 'How to recalibrate your baseline', pct: 20, color: '#6B6459' },
+      { label: 'Separating your patterns from his', pct: 25, color: '#6B6459' },
+      { label: 'Scripts that come from security', pct: 20, color: '#6B6459' },
+    ],
+    insights: [
+      { icon: '🧠', text: 'The anxiety you\'re feeling is not your personality. It\'s a conditioned response to an inconsistent environment. Levine\'s research calls this "protest behavior escalation" — your system becoming more activated trying to reach someone who keeps retreating.' },
+      { icon: '🪞', text: 'Situation 21 in the Decoder is specifically for this: "You are the anxious one — and you know it." It\'s one of the most important situations in the guide and one the most people skip.' },
+      { icon: '🔗', text: 'The goal is not to stop having needs. It\'s to develop enough internal security that his inconsistency stops costing you this much — whether or not you stay.' },
+    ],
+    sits: ['21', '24', '16', '25', '05', '17'],
+    sitLabels: [
+      '21 — You are the anxious one — and you know it',
+      '24 — Everything is fine — and that makes you more anxious',
+      '16 — He turns everything around and makes you the problem',
+      '25 — You still love them but you know you need to leave',
+      '05 — He goes silent during conflict',
+      '17 — He\'s present for everyone except you',
+    ],
+    quote: '"The constant push-pull changes your personality. You become hyperaware, anxious, obsessive, emotionally tired."',
+    ctaTitle: 'The Decoder has a full section called "What This Is Doing To You" — and three situations specifically for the identity erosion pattern.',
+    ctaSub: 'It separates your patterns from his, gives you language for what\'s happened to your nervous system, and tells you what the path back to yourself actually looks like.',
+  },
+  E: {
+    badge: 'No Movement',
+    badgeBg: '#F0EBE8',
+    badgeColor: '#5C3327',
+    barColor: '#8C4A35',
+    title: 'You already know something needs to change — you\'re waiting for the data to confirm it',
+    sub: 'You\'re not confused about the pattern. You see it clearly. What you\'re struggling with is the gap between knowing something and being ready to act on it. That gap is real and it deserves more than "just leave."',
+    profileDesc: 'This is the hardest stage of the anxious-avoidant dynamic — not the confusion, but the clarity that comes with nothing yet changing. You understand the cycle. You can describe it precisely. And you\'re still here. That\'s not weakness. That\'s love with insufficient data about what would actually need to change for things to be different.',
+    signals: [
+      'You\'ve had the same conversation more than once with no lasting change',
+      'You understand his avoidant patterns — you just don\'t know if they can change',
+      'You stay because you love him and because you\'re not fully sure you\'re right to leave',
+      'Part of you is waiting for something definitive — a clear enough sign to act on',
+    ],
+    dims: [
+      { label: 'Can they actually change?', pct: 15, color: '#8C4A35' },
+      { label: 'Growth vs. cycling — the real difference', pct: 20, color: '#8C4A35' },
+      { label: 'What behavioral evidence to look for', pct: 25, color: '#8C4A35' },
+      { label: 'Scripts for naming what you need', pct: 15, color: '#8C4A35' },
+    ],
+    insights: [
+      { icon: '📊', text: 'The difference between an avoidant who is changing and one who is cycling is specific and observable. The Decoder tells you exactly what behavioral markers to track — not feelings, actions.' },
+      { icon: '⏳', text: 'There is a point at which hope becomes a liability rather than a resource. The quiz at the end of the Decoder — "Is This Worth Staying For?" — gives you a scored framework for that decision.' },
+      { icon: '🔒', text: 'Situation 23: "He acknowledges everything but changes nothing." Situation 25: "You still love them but you know you need to leave." These were written for exactly where you are.' },
+    ],
+    sits: ['23', '25', '18', '22', '08', '11'],
+    sitLabels: [
+      '23 — He acknowledges everything but changes nothing',
+      '25 — You still love them but you know you need to leave',
+      '18 — He came back — should you let him in?',
+      '22 — He came back but you\'ve already started moving on',
+      '08 — He was all in — now he finds everything wrong with you',
+      '11 — He says "I love you" but won\'t commit to a relationship',
+    ],
+    quote: '"At some point you stop asking how do I make this work and start asking why am I accepting love that makes me anxious every day?"',
+    ctaTitle: 'The Decoder\'s final section — "Can They Actually Change?" — was written specifically for where you are right now.',
+    ctaSub: 'It gives you the exact behavioral markers that distinguish growth from cycling, the situations most relevant to your pattern, and a clear bridge to the "Is This Worth Staying For?" decision quiz.',
+  },
+};
+
+function showResults() {
+  // tally scores per type
+  const totals = {A:0,B:0,C:0,D:0,E:0};
+  Object.values(answers).forEach(a => {
+    Object.entries(a.tags).forEach(([k,v]) => totals[k] = (totals[k]||0) + v);
+  });
+
+  // find dominant type (max score wins; D only wins if 2+ ahead of top behavioral)
+  const sorted = Object.entries(totals).sort((a,b) => b[1]-a[1]);
+  let type = sorted[0][0];
+
+  // if D is dominant but only by 1 vs a behavioral type, pick behavioral
+  if (type === 'D') {
+    const topBeh = sorted.find(([k]) => k !== 'D');
+    if (topBeh && sorted[0][1] - topBeh[1] <= 2) type = topBeh[0];
+  }
+
+  const p = PROFILES[type];
+  show('results');
+  window.scrollTo(0,0);
+
+  // ── render results ──
+  const sitRowsHtml = p.sitLabels.map(l =>
+    `<div class="sit"><span class="sit-n">${l.slice(0,2)}</span><span>${l.slice(5)}</span></div>`
+  ).join('');
+
+  const dimsHtml = p.dims.map(d =>
+    `<div class="dim-card">
+      <div class="dim-label">${d.label}</div>
+      <div class="dim-bar-track"><div class="dim-bar" style="width:0%;background:${d.color}" data-pct="${d.pct}"></div></div>
+      <div class="dim-row"><span>Coverage in Decoder</span><strong>${d.pct}%+ of relevant content</strong></div>
+    </div>`
+  ).join('');
+
+  const insightsHtml = p.insights.map(i =>
+    `<div class="wtm-item"><span class="wtm-icon">${i.icon}</span><p class="wtm-text">${i.text}</p></div>`
+  ).join('');
+
+  document.getElementById('results-inner').innerHTML = `
+    <div class="result-header">
+      <p class="result-eyebrow">Your Result</p>
+      <span class="result-type-badge" style="background:${p.badgeBg};color:${p.badgeColor}">${p.badge}</span>
+      <h1 class="result-title">${p.title}</h1>
+      <p class="result-sub">${p.sub}</p>
+    </div>
+
+    <div class="profile-card">
+      <p class="profile-card-label">What this pattern looks like</p>
+      <p class="profile-card-desc">${p.profileDesc}</p>
+      <div class="profile-signals">
+        ${p.signals.map(s => `<div class="signal"><span class="signal-dot"></span><span>${s}</span></div>`).join('')}
+      </div>
+    </div>
+
+    <div class="wtm">
+      <p class="wtm-title">What this means — and why it matters</p>
+      ${insightsHtml}
+    </div>
+
+    <div class="result-quote"><p>${p.quote}</p></div>
+
+    <div class="sits-preview">
+      <p class="sits-preview-label">Your most relevant situations in the Decoder</p>
+      <div class="sits-grid">${sitRowsHtml}</div>
+    </div>
+
+    <div class="dims">${dimsHtml}</div>
+
+    <div class="cta-block">
+      <p class="cta-block-eyebrow">The Avoidant Behavior Decoder</p>
+      <h2 class="cta-block-title">${p.ctaTitle}</h2>
+      <p class="cta-block-sub">${p.ctaSub}</p>
+      <div class="cta-features">
+        <div class="cta-feature"><span class="cta-feature-icon">→</span><span><strong>25 situations decoded</strong> — find yours, get your answer, know what to do next</span></div>
+        <div class="cta-feature"><span class="cta-feature-icon">→</span><span><strong>11 word-for-word scripts</strong> — for the exact moments you don\'t know what to say</span></div>
+        <div class="cta-feature"><span class="cta-feature-icon">→</span><span><strong>"Is This Worth Staying For?" Quiz</strong> — 20 questions, 4 dimensions, one honest answer</span></div>
+        <div class="cta-feature"><span class="cta-feature-icon">→</span><span><strong>30-Day Progress Tracker</strong> — turn feelings into data before making any decision</span></div>
+      </div>
+      <a href="https://payhip.com/b/Zf6a8" class="btn-cta">Get the Avoidant Behavior Decoder →</a>
+      <p class="cta-trust">Instant download · PDF + Quiz + Tracker · One-time payment</p>
+    </div>
+
+    <div class="result-disclaimer">
+      This quiz is an educational tool designed to help you recognize patterns — not a clinical diagnosis. The results are a starting point for reflection, not a verdict on your relationship or your choices. All decisions remain entirely yours.
+    </div>
+
+    <div class="restart-row">
+      <button class="btn-restart" onclick="restartQuiz()">← Retake the Quiz</button>
+    </div>
+  `;
+
+  // animate bars
+  setTimeout(() => {
+    document.querySelectorAll('.dim-bar').forEach(b => b.style.width = b.dataset.pct + '%');
+  }, 300);
+}
+
+function restartQuiz() {
+  current = 0;
+  Object.keys(answers).forEach(k => delete answers[k]);
+  show('quiz');
+  render();
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
